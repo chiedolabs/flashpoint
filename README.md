@@ -23,13 +23,22 @@ Create a project
 - You can create a project by creating an ~/.flashpoint/<PROJECTNAME>.json file (eg. ~/.flashpoint/example.json)
 - Use the content in [the example config](./example-config.json) as a starting point.
 
-## Deploy your review app
+## Deploy your project
 
 ```
 flashpoint <PROJECT_FILE_NAME> create
 # An example would be. Notice that we're using the file name
-# flashpoint example create
+# flashpoint example.json create
 ```
+
+## Understanding the json config file format
+
+- **project** - The name of your project. You can make it whatever you want
+- **apps** - Each of your apps included in this project. This will be an array as there can be many.
+    - **name** - The name of the app
+    - **parent_app_name** - The name of the app on Heroku that will be used as the template (leave out the herokuapp.com portion)
+    - **path** - The absolute system path of this app's git repository on your machine.
+    - **scripts** - An array of scripts to run on the heroku app after you deploy it. This is useful for doing migrations, seeds, etc.
 
 ## Development
 
@@ -49,7 +58,6 @@ flashpoint <PROJECT_FILE_NAME> create
 ## TODO
 
 - Add time taken to script output
-- Better documentation
 - Add to homebrew for better installation.
 - Create an automation script for creating new projects.
 - Add dots so it's obvious that the script hasn't stalled or is there a way to stream output from the scripts?
