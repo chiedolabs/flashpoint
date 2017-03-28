@@ -15,6 +15,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func check(e error) {
@@ -53,6 +54,12 @@ type Config struct {
 }
 
 func main() {
+
+	/////////////////////////////////////////////////
+	// START THE TIMER
+	////////////////////////////////////////////////
+
+	start := time.Now()
 
 	// The create CLI util. This creates the review apps and is the bulk
 	// of what this CLI utility does
@@ -138,6 +145,7 @@ func main() {
 		/////////////////////////////////////////////////
 		// FORK THE PARENT APPS
 		////////////////////////////////////////////////
+
 		fmt.Println("\nFORKING YOUR HEROKU APPS")
 		fmt.Println("=================================")
 		reviewAppNames := make([]string, numOfApps)
@@ -227,4 +235,11 @@ func main() {
 	} else {
 		log.Fatal("Not a valid command")
 	}
+
+	/////////////////////////////////////////////////
+	// SHOW TIME ELAPSED
+	////////////////////////////////////////////////
+
+	elapsed := time.Since(start)
+	fmt.Printf("\n\nFlashpoint took %f seconds\n", elapsed.Seconds())
 }
