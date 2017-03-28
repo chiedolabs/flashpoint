@@ -59,5 +59,4 @@ flashpoint <PROJECT_FILE_NAME> create
 
 - Add to homebrew for better installation.
 - Create an automation script for creating new projects.
-- Add dots so it's obvious that the script hasn't stalled or is there a way to stream output from the scripts?
 - Better output using something like [this](https://github.com/fatih/color)
