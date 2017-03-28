@@ -4,13 +4,22 @@ An experience similar to 'Heroku review apps' with the focus being API-driven ap
 
 Instead of only having one staging version of your site on Heroku, you now have the option of creating a separate staging version for each branch that needs to be reviewed.
 
-## Installation and Upgrading
+# Table of Contents
+1. [Installation and Upgrading](#a)
+2. [Getting Started](#b)
+3. [Deploy your project](#c)
+4. [The config file format](#d)
+5. [Development](#e)
+6. [Gotchas](#f)
+7. [Todos](#g)
+
+## <div id="a">Installation and Upgrading</div>
 
 ```
 wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/raw/master/flashpoint?date=$(date +%s) && chmod +x /usr/local/bin/flashpoint
 ```
 
-## Getting started
+## <div id="b">Getting started</div>
 
 Create a directory in your root folder named .flashpoint
 
@@ -23,7 +32,7 @@ Create a project
 - You can create a project by creating an ~/.flashpoint/<PROJECTNAME>.json file (eg. ~/.flashpoint/example.json)
 - Use the content in [the example config](./example-config.json) as a starting point.
 
-## Deploy your project
+## <div id="c">Deploy your project</div>
 
 ```
 flashpoint <PROJECT_FILE_NAME> create
@@ -31,7 +40,7 @@ flashpoint <PROJECT_FILE_NAME> create
 # flashpoint example.json create
 ```
 
-## Understanding the json config file format
+## <div id="d">Understanding the json config file format</div>
 
 - **project** - The name of your project. You can make it whatever you want
 - **apps** - Each of your apps included in this project. This will be an array as there can be many.
@@ -40,12 +49,12 @@ flashpoint <PROJECT_FILE_NAME> create
     - **path** - The absolute system path of this app's git repository on your machine.
     - **scripts** - An array of scripts to run on the heroku app after you deploy it. This is useful for doing migrations, seeds, etc.
 
-## Development
+## <div id="e">Development</div>
 
 - Make your changes
 - Run `go build`
 
-## Gotchas
+## <div id="f">Gotchas</div>
 
 - Review apps are created on your personal Heroku account.
 - Review apps created with this tool don't have anything to do with Heroku Pipelines and don't automatically get deleted when you close a pull request.
@@ -55,7 +64,7 @@ flashpoint <PROJECT_FILE_NAME> create
 - It is still up to you to push your changes to github, etc.
 - Git remotes are created with each review app so you may want to remove the oldgit remotes on occassions.
 
-## TODO
+## <div id="g">To-dos</div>
 
 - Add to homebrew for better installation.
 - Create an automation script for creating new projects.
