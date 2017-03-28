@@ -1,0 +1,25 @@
+{
+  "project": "Example app",
+  "apps": [
+    {
+      "name": "Back-end",
+      "parent_app_name": "app_name_2183",
+      "path":"/Users/blah/app_name_2183",
+      "scripts": [
+        "bundle exec rake db:migrate",
+        "bundle exec rake db:seed"
+      ]
+    },
+    {
+      "name": "Front-end",
+      "path":"/Users/blah/app_name_8939",
+      "parent_app_name": "app_name_8939",
+      "env": {
+        "API_URL": "$REVIEW_APP_URLS[0]",
+        "APP_NAME": "$REVIEW_APP_NAME[0]",
+        "KEY": "value"
+      }
+    }
+  ]
+}
+
