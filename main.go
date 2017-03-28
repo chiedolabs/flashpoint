@@ -166,11 +166,8 @@ func main() {
 		}()
 
 		/////////////////////////////////////////////////
-		// FORK THE PARENT APPS
+		// START WORKING ON THE APPS
 		////////////////////////////////////////////////
-
-		boldBlue.Println("\nFORKING YOUR HEROKU APPS")
-		fmt.Println("=================================")
 		reviewAppNames := make([]string, numOfApps)
 		for index, app := range configStruct.Apps {
 			// save the app name. Must start with a letter
@@ -184,13 +181,20 @@ func main() {
 			// Save the name for later use
 			reviewAppNames[index] = reviewAppName
 
-			//// Heroku fork the repo
+			/////////////////////////////////////////////////
+			// FORK THE PARENT APPS
+			////////////////////////////////////////////////
+			boldGreen.Print("\n[" + app.Name + "] ")
+			boldBlue.Println("FORKING YOUR HEROKU APP")
+			fmt.Println("=================================")
 			os.Chdir(app.Path)
 			out, err := exec.Command("heroku", "fork", "--from", app.ParentAppName, "--to", reviewAppNames[index]).CombinedOutput()
 			fmt.Println(string(out))
 			check(err)
 
-			//// Add git remote for the heroku app
+			/////////////////////////////////////////////////
+			// ADD THE GIT REMOTES
+			////////////////////////////////////////////////
 			out1, err1 := exec.Command("git", "remote", "add", reviewAppNames[index], "https://git.heroku.com/"+reviewAppNames[index]+".git").CombinedOutput()
 			fmt.Println(string(out1))
 			check(err1)
@@ -198,7 +202,8 @@ func main() {
 			//////////////////////////////////////////
 			// SET ENV VARIABLES
 			//////////////////////////////////////////
-			boldBlue.Println("\nSETTING YOUR ENVIRONMENT VARIABLES")
+			boldGreen.Print("\n[" + app.Name + "] ")
+			boldBlue.Println("SETTING YOUR ENVIRONMENT VARIABLES")
 			fmt.Println("=================================")
 			if app.Env != nil {
 				args := []string{"config:set", "--app", reviewAppName}
@@ -228,7 +233,8 @@ func main() {
 			//////////////////////////////////////////////
 			// PUSH LOCAL CHANGES TO THE NEW APP
 			///////////////////////////////////////////////
-			boldBlue.Println("\nPUSHING YOUR BRANCHES TO HEROKU.")
+			boldGreen.Print("\n[" + app.Name + "] ")
+			boldBlue.Println("PUSHING YOUR BRANCH TO HEROKU.")
 			fmt.Println("=================================")
 			out2, err2 := exec.Command("git", "push", "-u", "-f", "--no-verify", reviewAppName, branches[index]+":master").CombinedOutput()
 			fmt.Println(string(out2))
@@ -237,7 +243,8 @@ func main() {
 			////////////////////////////////////
 			// RUN SCRIPTS
 			////////////////////////////////////
-			boldBlue.Println("\nRUNNING YOUR SCRIPTS")
+			boldGreen.Print("\n[" + app.Name + "] ")
+			boldBlue.Println("RUNNING YOUR SCRIPTS")
 			fmt.Println("=================================")
 			if app.Scripts != nil {
 				for _, script := range app.Scripts {
@@ -268,7 +275,8 @@ func main() {
 			fmt.Printf("git push %s\n\n", reviewAppNames[index])
 		}
 
-		fmt.Println("IMPORTANT: These are meerly a review-app-like feature but are not actually review apps. You will need to manually delete your review apps when you are done with them.")
+		boldWhite.Print("IMPORTANT: ")
+		fmt.Println("You will need to manually delete your review apps when you are done with them.")
 	} else {
 		log.Fatal("Not a valid command")
 	}
