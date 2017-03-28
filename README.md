@@ -4,6 +4,12 @@ An experience similar to 'Heroku review apps' with the focus being API-driven ap
 
 Instead of only having one staging version of your site on Heroku, you now have the option of creating a separate staging version for each branch that needs to be reviewed.
 
+## Installation and Upgrading
+
+```
+wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/raw/master/flashpoint?date=$(date +%s) && chmod +x /usr/local/bin/flashpoint
+```
+
 ## Getting started
 
 Create a directory in your root folder named .flashpoint
@@ -25,6 +31,11 @@ flashpoint <PROJECT_FILE_NAME> create
 # flashpoint example create
 ```
 
+## Development
+
+- Make your changes
+- Run `go build`
+
 ## Gotchas
 
 - Review apps are created on your personal Heroku account.
@@ -37,9 +48,9 @@ flashpoint <PROJECT_FILE_NAME> create
 
 ## TODO
 
-- Add installation instructions
 - Add time taken to script output
 - Better documentation
+- Add to homebrew for better installation.
 - Create an automation script for creating new projects.
 - Add dots so it's obvious that the script hasn't stalled or is there a way to stream output from the scripts?
 - Better output using something like [this](https://github.com/fatih/color)
