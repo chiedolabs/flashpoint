@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/mitchellh/go-homedir"
 	"io"
 	"io/ioutil"
@@ -19,15 +20,19 @@ import (
 )
 
 func check(e error) {
+	red := color.New(color.FgRed)
 	if e != nil {
 		//log.Fatal(e)
+		red.Print("Error: ")
 		fmt.Println("Something went wrong. Please try again.")
 		os.Exit(1)
 	}
 }
 
 func checkWithMessage(e error, message string) {
+	red := color.New(color.FgRed)
 	if e != nil {
+		red.Print("Error: ")
 		fmt.Println(message)
 		os.Exit(1)
 	}
@@ -54,6 +59,12 @@ type Config struct {
 }
 
 func main() {
+	/////////////////////////////////////////////////
+	// PREPARE SOME OUTPUT COLORS
+	/////////////////////////////////////////////////
+	boldGreen := color.New(color.FgGreen, color.Bold)
+	boldWhite := color.New(color.FgWhite, color.Bold)
+	boldBlue := color.New(color.FgBlue, color.Bold)
 
 	/////////////////////////////////////////////////
 	// START THE TIMER
@@ -101,10 +112,11 @@ func main() {
 		// Create a place to store the branches
 		branches := make([]string, numOfApps)
 
-		fmt.Println("\nCHOOSE YOUR BRANCHES")
+		boldBlue.Println("\nCHOOSE YOUR BRANCHES")
 		fmt.Println("=================================")
 		for index, app := range configStruct.Apps {
-			fmt.Println("App: " + app.Name)
+			boldWhite.Print("\nAPP: ")
+			fmt.Println(app.Name)
 			reader := bufio.NewReader(os.Stdin)
 
 			// Make it store the current branch by default. The following is
@@ -132,7 +144,8 @@ func main() {
 
 			// Allow the user to specify a branch and if the user
 			// specified, overide the default
-			fmt.Printf("Which branch would you like to use? (Press enter to use '%s'): ", branches[index])
+			boldWhite.Print("\nWhich branch would you like to use?")
+			fmt.Printf(" (Press enter to use '%s'):", branches[index])
 			text, _ := reader.ReadString('\n')
 
 			if len(text) > 1 {
@@ -156,7 +169,7 @@ func main() {
 		// FORK THE PARENT APPS
 		////////////////////////////////////////////////
 
-		fmt.Println("\nFORKING YOUR HEROKU APPS")
+		boldBlue.Println("\nFORKING YOUR HEROKU APPS")
 		fmt.Println("=================================")
 		reviewAppNames := make([]string, numOfApps)
 		for index, app := range configStruct.Apps {
@@ -185,6 +198,8 @@ func main() {
 			//////////////////////////////////////////
 			// SET ENV VARIABLES
 			//////////////////////////////////////////
+			boldBlue.Println("\nSETTING YOUR ENVIRONMENT VARIABLES")
+			fmt.Println("=================================")
 			if app.Env != nil {
 				args := []string{"config:set", "--app", reviewAppName}
 				for key, value := range app.Env {
@@ -213,6 +228,8 @@ func main() {
 			//////////////////////////////////////////////
 			// PUSH LOCAL CHANGES TO THE NEW APP
 			///////////////////////////////////////////////
+			boldBlue.Println("\nPUSHING YOUR BRANCHES TO HEROKU.")
+			fmt.Println("=================================")
 			out2, err2 := exec.Command("git", "push", "-u", "-f", "--no-verify", reviewAppName, branches[index]+":master").CombinedOutput()
 			fmt.Println(string(out2))
 			check(err2)
@@ -220,6 +237,8 @@ func main() {
 			////////////////////////////////////
 			// RUN SCRIPTS
 			////////////////////////////////////
+			boldBlue.Println("\nRUNNING YOUR SCRIPTS")
+			fmt.Println("=================================")
 			if app.Scripts != nil {
 				for _, script := range app.Scripts {
 					out, err := exec.Command("heroku", "run", "--app", reviewAppName, script).CombinedOutput()
@@ -237,13 +256,16 @@ func main() {
 		///////////////////////////////////////////////////////
 		// USER REPORT
 		//////////////////////////////////////////////////////
-		fmt.Println("\nALL DONE")
+		boldBlue.Println("\nALL DONE")
 		fmt.Println("=================================")
 		for index, app := range configStruct.Apps {
-			fmt.Println(app.Name)
-			fmt.Printf("URL: %s.herokuapp.com\n", reviewAppNames[index])
-			fmt.Printf("Branch: %s", branches[index])
-			fmt.Printf("Update command: git push %s\n\n", reviewAppNames[index])
+			boldGreen.Println(app.Name)
+			boldWhite.Print("URL: ")
+			fmt.Printf("%s.herokuapp.com\n", reviewAppNames[index])
+			boldWhite.Print("Branch: ")
+			fmt.Printf("%s", branches[index])
+			boldWhite.Print("Update command: ")
+			fmt.Printf("git push %s\n\n", reviewAppNames[index])
 		}
 
 		fmt.Println("IMPORTANT: These are meerly a review-app-like feature but are not actually review apps. You will need to manually delete your review apps when you are done with them.")

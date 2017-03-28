@@ -51,6 +51,7 @@ flashpoint <PROJECT_FILE_NAME> create
 
 ## <div id="e">Development</div>
 
+- Install the packages `go get ./...`
 - Make your changes
 - Run `go build`
 
@@ -68,4 +69,3 @@ flashpoint <PROJECT_FILE_NAME> create
 
 - Add to homebrew for better installation.
 - Create an automation script for creating new projects.
-- Better output using something like [this](https://github.com/fatih/color)
