@@ -74,6 +74,6 @@ flashpoint example.json create
 
 ## <div id="g">To-dos</div>
 
-- Add clean up script for apps. The user should be asked if he would like to clean up upon running the create script.
-- Add to homebrew for better installation.
+- Add clean up script for apps.
 - Create an automation script for creating new projects.
+- Add to homebrew for better installation.
