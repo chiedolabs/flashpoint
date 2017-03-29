@@ -77,3 +77,6 @@ flashpoint example.json create
 - Add clean up script for apps.
 - Create an automation script for creating new projects.
 - Add to homebrew for better installation.
+- Make it public
+- Get 10 stars
+- Get a logo
