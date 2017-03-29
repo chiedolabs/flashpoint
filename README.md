@@ -7,7 +7,7 @@ Instead of only having one staging version of your site on Heroku, you now have 
 # Table of Contents
 1. [Installation and Upgrading](#a)
 2. [Getting Started](#b)
-3. [Deploy your project](#c)
+3. [Using the tool](#c)
 4. [The config file format](#d)
 5. [Development](#e)
 6. [Gotchas](#f)
@@ -32,12 +32,18 @@ Create a project
 - You can create a project by creating an ~/.flashpoint/<PROJECTNAME>.json file (eg. ~/.flashpoint/example.json)
 - Use the content in [the example config](./example-config.json) as a starting point.
 
-## <div id="c">Deploy your project</div>
+## <div id="c">Using the tool</div>
+
+#####Deploying a project from your current branch(s)
 
 ```
 flashpoint <PROJECT_FILE_NAME> create
-# An example would be. Notice that we're using the file name
-# flashpoint example.json create
+```
+
+See a fleshed out example (Notice that we're using the file name but not the absolute path).
+
+``` 
+flashpoint example.json create
 ```
 
 ## <div id="d">Understanding the json config file format</div>
@@ -57,15 +63,15 @@ flashpoint <PROJECT_FILE_NAME> create
 
 ## <div id="f">Gotchas</div>
 
-- Review apps are created on your personal Heroku account.
-- Review apps created with this tool don't have anything to do with Heroku Pipelines and don't automatically get deleted when you close a pull request.
-- If the app you are creating a review app version of has any addons, you'll need to make sure you have a credit card on file even if there won't be any charges.
+- The app are created on your personal Heroku account.
+- The apps created with this tool don't have anything to do with Heroku Pipelines and don't automatically get deleted when you close a pull request.
+- If the parent app has any addons, you'll need to make sure you have a credit card on file on your personal account even if there won't be any charges.
 - We are using Heroku forking to copy the apps so be sure to read [this doc](https://devcenter.heroku.com/articles/fork-app) to be aware of the implications.
-- Changes you make will not automatically be deployed to the review app. You will need to manually push any changes you make after the review app creation to that review app.
+- Changes you make will not automatically be deployed to your app. You will need to manually push any changes you make after the initial deployment. This can be done with `git push -f <HEROKU_APP_NAME> <YOUR_BRANCHNAME>:master`
 - It is still up to you to push your changes to github, etc.
-- Git remotes are created with each review app so you may want to remove the oldgit remotes on occassions.
 
 ## <div id="g">To-dos</div>
 
+- Add clean up script for apps. The user should be asked if he would like to clean up upon running the create script.
 - Add to homebrew for better installation.
 - Create an automation script for creating new projects.
