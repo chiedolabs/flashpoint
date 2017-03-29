@@ -272,7 +272,7 @@ func main() {
 			boldWhite.Print("Branch: ")
 			fmt.Printf("%s", branches[index])
 			boldWhite.Print("Update command: ")
-			fmt.Printf("git push %s\n\n", reviewAppNames[index])
+			fmt.Printf("git push -f %s %s:master\n\n", reviewAppNames[index], branches[index])
 		}
 
 		boldWhite.Print("IMPORTANT: ")
