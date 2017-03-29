@@ -36,7 +36,9 @@ Create a project
 
 ## <div id="c">Using the tool</div>
 
-#####Deploying a project from your current branch(s)
+
+####Deploying a project from your current branch(s)
+
 
 ```
 flashpoint <PROJECT_FILE_NAME> create
