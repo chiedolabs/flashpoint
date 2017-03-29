@@ -195,9 +195,32 @@ func main() {
 			/////////////////////////////////////////////////
 			// ADD THE GIT REMOTES
 			////////////////////////////////////////////////
-			out1, err1 := exec.Command("git", "remote", "add", reviewAppNames[index], "https://git.heroku.com/"+reviewAppNames[index]+".git").CombinedOutput()
-			fmt.Println(string(out1))
-			check(err1)
+			// Check if the file already contains the include path if it doesn't then add it to the file
+			readOnlyConfig, err := ioutil.ReadFile(app.Path + "/.git/config")
+			check(err)
+
+			if strings.Contains(string(readOnlyConfig), "\n[include]\n  path = ./flashpointrepos") == false {
+				// Open the file
+				gitConfig, err := os.OpenFile(app.Path+"/.git/config", os.O_APPEND|os.O_WRONLY, 0666)
+				check(err)
+
+				defer gitConfig.Close()
+
+				if _, err := gitConfig.WriteString("\n[include]\n  path = ./flashpointrepos"); err != nil {
+					check(err)
+				}
+			}
+
+			// Now add the remote manually by adding it to our file
+			flashpointRepos, err := os.OpenFile(app.Path+"/.git/flashpointrepos", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
+			check(err)
+			fmt.Println("good")
+
+			defer flashpointRepos.Close()
+
+			if _, err := flashpointRepos.WriteString(fmt.Sprintf("\n[remote \"%s\"]\n  url = https://git.heroku.com/%s.git\n  fetch = +refs/heads/*:refs/remotes/%s/*\n[branch \"%s\"]\n  remote = %s\n  merge = refs/heads/master", reviewAppName, reviewAppName, reviewAppName, branches[index], reviewAppName)); err != nil {
+				check(err)
+			}
 
 			//////////////////////////////////////////
 			// SET ENV VARIABLES
@@ -236,7 +259,7 @@ func main() {
 			boldGreen.Print("\n[" + app.Name + "] ")
 			boldBlue.Println("PUSHING YOUR BRANCH TO HEROKU.")
 			fmt.Println("=================================")
-			out2, err2 := exec.Command("git", "push", "-u", "-f", "--no-verify", reviewAppName, branches[index]+":master").CombinedOutput()
+			out2, err2 := exec.Command("git", "push", "-f", "--no-verify", reviewAppName, branches[index]+":master").CombinedOutput()
 			fmt.Println(string(out2))
 			check(err2)
 
