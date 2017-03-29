@@ -1,5 +1,7 @@
 # Flashpoint
 
+**Beta notice:** This CLI utility is still in beta and is rapidly changing. Many changes are breaking changes and require manual intervention. 
+
 An experience similar to 'Heroku review apps' with the focus being API-driven applications that consist of multiple git repositories.
 
 Instead of only having one staging version of your site on Heroku, you now have the option of creating a separate staging version for each branch that needs to be reviewed.
