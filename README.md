@@ -1,6 +1,6 @@
 # Flashpoint
 
-**Beta notice:** This CLI utility is still in beta and is rapidly changing. Many changes are breaking changes and require manual intervention. 
+**Beta notice:** This CLI utility is still in beta and is rapidly changing. Many changes are breaking changes and require manual intervention.
 
 An experience similar to 'Heroku review apps' with the focus being API-driven applications that consist of multiple git repositories.
 
@@ -31,7 +31,8 @@ mkdir -p ~/.flashpoint/projects
 
 Create a project
 
-- You can create a project by creating an ~/.flashpoint/projects/<PROJECTNAME>.json file (eg. ~/.flashpoint/projects/example.json)
+- The first step is that you create template heroku apps for each of your apps to inherit from. You don't want to use the production heroku app as the parent app (template).
+- You can then create a project by creating an ~/.flashpoint/projects/<PROJECTNAME>.json file (eg. ~/.flashpoint/projects/example.json)
 - Use the content in [the example config](./example-config.json) as a starting point.
 
 ## <div id="c">Using the tool</div>
@@ -44,8 +45,23 @@ flashpoint <PROJECT_FILE_NAME> create
 
 See a fleshed out example (Notice that we're using the file name but not the absolute path).
 
-``` 
+```
 flashpoint example.json create
+```
+
+#### Cleaning up old apps
+
+To delete apps created with this tool that have been inactive for over 5 days, you can run the script below.
+
+```
+flashpoint clean
+```
+
+If you don't want to worry about running that command manually, you can schedule it with a cronjob by entering `crontab -e` in the terminal and then adding the following content and then saving the file.
+
+```
+# This will run every day at noon. Notice that if your computer is shut down or sleeping at the time, the script will not run until the next day at the specified time.
+0 12 * * *  flashpoint clean
 ```
 
 ## <div id="d">Understanding the json config file format</div>
@@ -74,7 +90,6 @@ flashpoint example.json create
 
 ## <div id="g">To-dos</div>
 
-- Add clean up script for apps.
 - Create an automation script for creating new projects.
 - Add to homebrew for better installation.
 - Make it public

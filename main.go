@@ -12,8 +12,11 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -58,6 +61,149 @@ type Config struct {
 	} `json:"apps"`
 }
 
+func destroyOldApps(path string, f os.FileInfo, err error) error {
+	boldGreen := color.New(color.FgGreen, color.Bold)
+
+	if strings.HasSuffix(path, ".json") {
+		config, err := ioutil.ReadFile(path)
+
+		check(err)
+
+		configAsBytes := []byte(config)
+
+		// Have to use var because we have to initial value for this
+		var configStruct Config
+
+		// Get up in that JSON file and convert it into a Map
+		if err := json.Unmarshal(configAsBytes, &configStruct); err != nil {
+			log.Fatal("Your configuration file is incorrectly formed.")
+		}
+
+		// Loop through each app so we can open each flashpoint git remote
+		// file and check each of the apps
+		for _, app := range configStruct.Apps {
+			readOnlyFlashpointRepos, err := ioutil.ReadFile(app.Path + "/.git/flashpointrepos")
+			check(err)
+
+			// Get a list of apps from the flashpoint git remote file
+			r, _ := regexp.Compile("remote \"(.*)\"")
+			remoteList := r.FindAllStringSubmatch(string(readOnlyFlashpointRepos), -1)
+			if len(remoteList) < 1 {
+				boldGreen.Println(configStruct.Project + "[" + app.Name + "] has no running apps.")
+				continue
+			}
+
+			// Get a slice of app names in the format we want it in
+			appNames := []string{}
+			for index, _ := range remoteList {
+				appNames = append(appNames, remoteList[index][1])
+			}
+
+			// Using Heroku's API, check and see if any of the apps have been inactive
+			// for a certain amount of days
+
+			// Get the HEROKU token as we will need that for the CURL requests
+			out, err := exec.Command("heroku", "auth:token").CombinedOutput()
+			check(err)
+			herokuToken := strings.Replace(string(out), "\n", "", -1)
+
+			// We will store the list of repos to delete here
+			toDelete := []string{}
+
+			for _, name := range appNames {
+				req, err := http.NewRequest("GET", "https://api.heroku.com/apps/"+name+"/dynos", nil)
+				check(err)
+				req.Header.Set("Accept", "application/vnd.heroku+json; version=3")
+				req.Header.Set("Authorization", "Bearer "+herokuToken)
+
+				resp, err := http.DefaultClient.Do(req)
+				check(err)
+				defer resp.Body.Close()
+
+				bodyBytes, err2 := ioutil.ReadAll(resp.Body)
+				check(err2)
+				bodyString := string(bodyBytes)
+
+				if resp.StatusCode == 200 { // OK
+					// Do stuff with API response
+					r, _ := regexp.Compile("\"updated_at\":\"(.*)\"")
+
+					updatedAt := strings.Split(r.FindStringSubmatch(bodyString)[1], "\n")[0]
+
+					// Weird how golang creates format strings but whatev
+					timeFormat := "2006-01-02T15:04"
+
+					// Need to remove the Z stuff so it can be parsed
+					updatedAt = updatedAt[0 : len(updatedAt)-4]
+					then, err := time.Parse(timeFormat, updatedAt)
+					check(err)
+					hoursInactive := time.Since(then).Hours()
+
+					// If an app hasn't been active for more than this time,
+					// delete it
+					hoursInactiveBeforeDeletion := 5 * 24
+					if int(hoursInactive) > hoursInactiveBeforeDeletion {
+						toDelete = append(toDelete, name)
+					}
+
+				} else {
+					if strings.Contains(bodyString, "not_found") {
+						// if the app wasn't found, set it for deletion
+						toDelete = append(toDelete, name)
+					}
+					fmt.Println(bodyString)
+				}
+			}
+
+			if len(toDelete) == 0 {
+				boldGreen.Println(configStruct.Project + "[" + app.Name + "] has no running apps that are expired.")
+			} else {
+
+				// Get the old content of the file so we can overwrite it
+				fileContentArr := strings.Split(string(readOnlyFlashpointRepos), "\n")
+
+				// We need to delete each app from Heroku and then update the
+				// repos config
+				for _, appToDelete := range toDelete {
+					// Regexes weren't working for me so I did this hackish thing...
+					for index, _ := range fileContentArr {
+						if strings.Contains(fileContentArr[index], "remote \""+appToDelete+"\"") {
+							// This means we've found a section we need to delete...
+							fileContentArr[index-1] = "" // The comment line
+							fileContentArr[index] = ""   // The remote line
+							fileContentArr[index+1] = "" // And so on
+							fileContentArr[index+2] = ""
+							fileContentArr[index+3] = ""
+							fileContentArr[index+4] = ""
+							fileContentArr[index+5] = ""
+						}
+					}
+
+					newFileContents := ""
+					// Recreate new file contents
+					for _, value := range fileContentArr {
+						if value != "" {
+							newFileContents += value + "\n"
+						}
+					}
+
+					// Now that we're ready, destroy the app on Heroku
+					out, _ := exec.Command("heroku", "apps:destroy", "--app", appToDelete, "--confirm", appToDelete).CombinedOutput()
+					fmt.Println(string(out))
+
+					// Save the changes
+					err = ioutil.WriteFile(app.Path+"/.git/flashpointrepos", []byte(newFileContents), 0664)
+					check(err)
+
+				}
+				boldGreen.Println("[" + configStruct.Project + "] SUCCESS: " + strconv.Itoa((len(toDelete))) + " apps deleted.")
+			}
+		}
+	}
+
+	return nil
+}
+
 func main() {
 	/////////////////////////////////////////////////
 	// PREPARE SOME OUTPUT COLORS
@@ -72,9 +218,11 @@ func main() {
 
 	start := time.Now()
 
-	// The create CLI util. This creates the review apps and is the bulk
-	// of what this CLI utility does
 	if len(os.Args) >= 3 && os.Args[2] == "create" {
+		/////////////////////////////////////////////////////////////
+		// CREATE - The create command in the CLI util
+		// This creates the projects on Heroku from the templates.
+		////////////////////////////////////////////////////////////
 
 		///////////////////////////////////////////
 		// LOAD THE CONFIG FILE
@@ -201,7 +349,7 @@ func main() {
 
 			if strings.Contains(string(readOnlyConfig), "\n[include]\n  path = ./flashpointrepos") == false {
 				// Open the file
-				gitConfig, err := os.OpenFile(app.Path+"/.git/config", os.O_APPEND|os.O_WRONLY, 0666)
+				gitConfig, err := os.OpenFile(app.Path+"/.git/config", os.O_APPEND|os.O_WRONLY, 0664)
 				check(err)
 
 				defer gitConfig.Close()
@@ -212,13 +360,12 @@ func main() {
 			}
 
 			// Now add the remote manually by adding it to our file
-			flashpointRepos, err := os.OpenFile(app.Path+"/.git/flashpointrepos", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
+			flashpointRepos, err := os.OpenFile(app.Path+"/.git/flashpointrepos", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0664)
 			check(err)
-			fmt.Println("good")
 
 			defer flashpointRepos.Close()
 
-			if _, err := flashpointRepos.WriteString(fmt.Sprintf("\n[remote \"%s\"]\n  url = https://git.heroku.com/%s.git\n  fetch = +refs/heads/*:refs/remotes/%s/*\n[branch \"%s\"]\n  remote = %s\n  merge = refs/heads/master", reviewAppName, reviewAppName, reviewAppName, branches[index], reviewAppName)); err != nil {
+			if _, err := flashpointRepos.WriteString(fmt.Sprintf("\n#DO NOT MANUALLY EDIT THESE IN ANY WAY\n[remote \"%s\"]\n  url = https://git.heroku.com/%s.git\n  fetch = +refs/heads/*:refs/remotes/%s/*\n[branch \"%s\"]\n  remote = %s\n  merge = refs/heads/master", reviewAppName, reviewAppName, reviewAppName, branches[index], reviewAppName)); err != nil {
 				check(err)
 			}
 
@@ -294,12 +441,21 @@ func main() {
 			fmt.Printf("%s.herokuapp.com\n", reviewAppNames[index])
 			boldWhite.Print("Branch: ")
 			fmt.Printf("%s", branches[index])
-			boldWhite.Print("Update command: ")
+			boldWhite.Print("\nUpdate command: ")
 			fmt.Printf("git push -f %s %s:master\n\n", reviewAppNames[index], branches[index])
 		}
+	} else if len(os.Args) >= 2 && os.Args[1] == "clean" {
+		/////////////////////////////////////////////////////////////
+		// CLEAN - The clean command for the cli util. Deletes all apps
+		// created by this tool that haven't been accessed in the last
+		// five days
+		////////////////////////////////////////////////////////////
 
-		boldWhite.Print("IMPORTANT: ")
-		fmt.Println("You will need to manually delete your review apps when you are done with them.")
+		homeDir, err := homedir.Dir()
+
+		check(err)
+
+		filepath.Walk(homeDir+"/.flashpoint/projects/", destroyOldApps)
 	} else {
 		log.Fatal("Not a valid command")
 	}
@@ -309,5 +465,5 @@ func main() {
 	////////////////////////////////////////////////
 
 	elapsed := time.Since(start)
-	fmt.Printf("\n\nFlashpoint took %f seconds\n", elapsed.Seconds())
+	boldGreen.Printf("\n\nFlashpoint took %f seconds\n", elapsed.Seconds())
 }
