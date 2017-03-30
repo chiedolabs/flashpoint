@@ -23,15 +23,15 @@ wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/raw/m
 
 ## <div id="b">Getting started</div>
 
-Create a directory in your root folder named .flashpoint
+Create a directory in your root folder named `.flashpoint` along with a `projects` sub-directory.
 
 ```
-mkdir ~/.flashpoint
+mkdir -p ~/.flashpoint/projects
 ```
 
 Create a project
 
-- You can create a project by creating an ~/.flashpoint/<PROJECTNAME>.json file (eg. ~/.flashpoint/example.json)
+- You can create a project by creating an ~/.flashpoint/projects/<PROJECTNAME>.json file (eg. ~/.flashpoint/projects/example.json)
 - Use the content in [the example config](./example-config.json) as a starting point.
 
 ## <div id="c">Using the tool</div>

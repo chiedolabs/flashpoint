@@ -87,7 +87,7 @@ func main() {
 		}
 
 		homeDir, err := homedir.Dir()
-		config, err := ioutil.ReadFile(homeDir + "/.flashpoint/" + file)
+		config, err := ioutil.ReadFile(homeDir + "/.flashpoint/projects/" + file)
 
 		// If the file does not exist, end the script
 		checkWithMessage(err, "That configuration file does not exist.")
