@@ -1,8 +1,8 @@
 # Flashpoint
 
-<center>
-<img src="logo/flashpoint.png" style="max-width: 400px; height: auto;" />
-</center>
+<div style="align:center;">
+<img src="logo/flashpoint.png" width="100" />
+</div>
 
 **Beta notice:** This CLI utility is still in beta and is rapidly changing. Many changes are breaking changes and require manual intervention.
 
