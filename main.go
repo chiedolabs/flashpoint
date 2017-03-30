@@ -156,7 +156,7 @@ func destroyOldApps(path string, f os.FileInfo, err error) error {
 			}
 
 			if len(toDelete) == 0 {
-				boldGreen.Println(configStruct.Project + "[" + app.Name + "] has no running apps that are expired.")
+				boldGreen.Println(configStruct.Project + " [" + app.Name + "] has no running apps that are expired.")
 			} else {
 
 				// Get the old content of the file so we can overwrite it
@@ -196,7 +196,7 @@ func destroyOldApps(path string, f os.FileInfo, err error) error {
 					check(err)
 
 				}
-				boldGreen.Println("[" + configStruct.Project + "] SUCCESS: " + strconv.Itoa((len(toDelete))) + " apps deleted.")
+				boldGreen.Println(configStruct.Project + " [" + app.Name + "] SUCCESS: " + strconv.Itoa((len(toDelete))) + " apps deleted.\n\n")
 			}
 		}
 	}
