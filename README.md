@@ -1,10 +1,10 @@
 # Flashpoint
 
+![Flashpoint](logo/flashpoint.png)
+
 **Beta notice:** This CLI utility is still in beta and is rapidly changing. Many changes are breaking changes and require manual intervention.
 
-An experience similar to 'Heroku review apps' with the focus being API-driven applications that consist of multiple git repositories.
-
-Instead of only having one staging version of your site on Heroku, you now have the option of creating a separate staging version for each branch that needs to be reviewed.
+A CLI utility for creating temporary Heroku deployments from a starter Heroku app and a git branch. The experience is similar to '[Heroku Review Apps](https://devcenter.heroku.com/articles/github-integration-review-apps)' but focuses on API-driven projects that consist of multiple git repositories.
 
 # Table of Contents
 1. [Installation and Upgrading](#a)
@@ -90,8 +90,12 @@ If you don't want to worry about running that command manually, you can schedule
 
 ## <div id="g">To-dos</div>
 
+- Better docs
 - Create an automation script for creating new projects.
-- Add to homebrew for better installation.
-- Make it public
-- Get 10 stars
-- Get a logo
+- Complete Beta and start versioning properly
+- Add to homebrew for a more sensible installation process.
+
+## Legal Stuff
+
+- [LICENSE](./LICENSE)
+- Logo <a href='http://www.freepik.com/free-vector/lightning-logo_719539.htm'>Designed by Freepik</a>

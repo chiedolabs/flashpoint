@@ -1,0 +1,5 @@
+Fonts used:
+
+- "Roboto" designed by Christian Robertson (http://www.fontsquirrel.com/fonts/Roboto).
+
+- "Daela" designed by MartinPlus (www.fontsquirrel.com/fonts/Daela).
