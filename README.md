@@ -59,6 +59,12 @@ To delete apps created with this tool that have been inactive for over 5 days, y
 flashpoint clean
 ```
 
+Or to destroy all apps created with this tool run
+
+```
+flashpoint clean destroy_all
+```
+
 If you don't want to worry about running that command manually, you can schedule it with a cronjob by entering `crontab -e` in the terminal and then adding the following content and then saving the file.
 
 ```

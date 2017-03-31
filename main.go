@@ -160,7 +160,7 @@ func destroyOldApps(path string, f os.FileInfo, err error) error {
 					// If an app hasn't been active for more than this time,
 					// delete it
 					hoursInactiveBeforeDeletion := 5 * 24
-					if int(hoursInactive) > hoursInactiveBeforeDeletion {
+					if (len(os.Args) >= 3 && os.Args[2] == "destroy_all") || int(hoursInactive) > hoursInactiveBeforeDeletion {
 						toDelete = append(toDelete, name)
 					}
 
