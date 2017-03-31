@@ -5,10 +5,10 @@
       "name": "Back-end",
       "parent_app_name": "app_name_2183",
       "path":"/Users/blah/app_name_2183",
-      "scripts": [
-        "bundle exec rake db:migrate",
-        "bundle exec rake db:seed"
-      ]
+      "scripts": {
+        "local": "heroku config:set --app $REVIEW_APP_NAMES[0] DATABASE_URL=$(echo $(heroku config:get --app $REVIEW_APP_NAMES[0] CLEARDB_DATABASE_URL) | sed 's/mysql/mysql2/g')",
+        "remote": "bundle exec rake db:migrate && bundle exec rake db:seed"
+      }
     },
     {
       "name": "Front-end",
@@ -16,7 +16,7 @@
       "parent_app_name": "app_name_8939",
       "env": {
         "API_URL": "$REVIEW_APP_URLS[0]",
-        "APP_NAME": "$REVIEW_APP_NAME[0]",
+        "APP_NAME": "$REVIEW_APP_NAMES[0]",
         "KEY": "value"
       }
     }

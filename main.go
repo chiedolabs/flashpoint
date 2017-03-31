@@ -50,6 +50,24 @@ func uniqueString() string {
 	return hex.EncodeToString(b)
 }
 
+func evaluateVars(value string, reviewAppNames []string) string {
+	for iii, _ := range reviewAppNames {
+		varStr := ""
+
+		// Make REVIEW_APP_NAMES a config variable
+		varStr = "$REVIEW_APP_NAMES[" + strconv.Itoa(iii) + "]"
+		value = strings.Replace(value, varStr, reviewAppNames[iii], -1)
+
+		// Make REVIEW_APP_URLS a config variable
+		varStr = "$REVIEW_APP_URLS[" + strconv.Itoa(iii) + "]"
+		urlStr := "https://" + reviewAppNames[iii] + ".herokuapp.com"
+		value = strings.Replace(value, varStr, urlStr, -1)
+
+	}
+
+	return value
+}
+
 type Config struct {
 	Project string `json:"project"`
 	Apps    []struct {
@@ -57,7 +75,7 @@ type Config struct {
 		ParentAppName string            `json:"parent_app_name"`
 		Path          string            `json:"path"`
 		Env           map[string]string `json:"env"`
-		Scripts       []string          `json:"scripts"`
+		Scripts       map[string]string `json:"scripts"`
 	} `json:"apps"`
 }
 
@@ -378,18 +396,8 @@ func main() {
 			if app.Env != nil {
 				args := []string{"config:set", "--app", reviewAppName}
 				for key, value := range app.Env {
-					for iii, _ := range reviewAppNames {
-						varStr := ""
-
-						// Make REVIEW_APP_NAMES a config variable
-						varStr = "$REVIEW_APP_NAMES[" + strconv.Itoa(iii) + "]"
-						value = strings.Replace(value, varStr, reviewAppNames[iii], -1)
-
-						// Make REVIEW_APP_URLS a config variable
-						varStr = "$REVIEW_APP_URLS[" + strconv.Itoa(iii) + "]"
-						urlStr := "https://" + reviewAppNames[iii] + ".herokuapp.com"
-						value = strings.Replace(value, varStr, urlStr, -1)
-					}
+					// evaluate the variables in the string
+					value = evaluateVars(value, reviewAppNames)
 
 					// Add to the args
 					args = append(args, key+"="+value)
@@ -417,10 +425,19 @@ func main() {
 			boldBlue.Println("RUNNING YOUR SCRIPTS")
 			fmt.Println("=================================")
 			if app.Scripts != nil {
-				for _, script := range app.Scripts {
-					out, err := exec.Command("heroku", "run", "--app", reviewAppName, script).CombinedOutput()
-					fmt.Println(string(out))
-					check(err)
+				for env, script := range app.Scripts {
+					// evaluate the variables in the string
+					script = evaluateVars(script, reviewAppNames)
+
+					if env == "remote" {
+						out, err := exec.Command("heroku", "run", "--app", reviewAppName, script).CombinedOutput()
+						fmt.Println(string(out))
+						check(err)
+					} else {
+						out, err := exec.Command("bash", "-c", script).CombinedOutput()
+						fmt.Println(string(out))
+						check(err)
+					}
 				}
 			}
 		}
