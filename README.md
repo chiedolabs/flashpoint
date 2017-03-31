@@ -100,7 +100,7 @@ If you don't want to worry about running that command manually, you can schedule
 
 - Better docs
 - Create an automation script for creating new projects.
-- Complete Beta and start versioning properly
+- Complete beta and move to version 1.0
 - Add to homebrew for a more sensible installation process.
 
 ## Legal Stuff
