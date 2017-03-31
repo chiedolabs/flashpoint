@@ -103,6 +103,7 @@ If you don't want to worry about running that command manually, you can schedule
 
 ## <div id="g">To-dos</div>
 
+- Comment my functions
 - Better docs
 - Create an automation script for creating new projects.
 - Complete beta and move to version 1.0
