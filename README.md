@@ -25,7 +25,7 @@ A CLI utility for creating temporary Heroku deployments from a starter Heroku ap
 # via the version number. You can replace the version number below with any version
 # you want to install. When you run this, your current version will be overwritten
 
-wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/blob/0.0.2/flashpoint?raw=true \
+wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/blob/0.0.3/flashpoint?raw=true \
 && chmod +x /usr/local/bin/flashpoint
 ```
 
