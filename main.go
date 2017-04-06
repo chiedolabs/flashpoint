@@ -230,6 +230,11 @@ func init() {
 }
 
 func main() {
+	if len(os.Args) >= 2 && os.Args[1] == "--version" {
+		fmt.Println("0.0.2")
+		os.Exit(0)
+	}
+
 	/////////////////////////////////////////////////
 	// PREPARE SOME OUTPUT COLORS
 	/////////////////////////////////////////////////
@@ -499,6 +504,7 @@ func main() {
 		check(err)
 
 		filepath.Walk(homeDir+"/.flashpoint/projects/", destroyOldApps)
+
 	} else {
 		log.Fatal("Not a valid command")
 	}
