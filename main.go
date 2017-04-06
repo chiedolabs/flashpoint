@@ -29,7 +29,7 @@ func check(e error) {
 		//log.Fatal(e)
 		red.Print("Error: ")
 		fmt.Println("Something went wrong. Please try again.")
-		os.Exit(1)
+		os.Exit(0)
 	}
 }
 
@@ -38,7 +38,7 @@ func checkWithMessage(e error, message string) {
 	if e != nil {
 		red.Print("Error: ")
 		fmt.Println(message)
-		os.Exit(1)
+		os.Exit(0)
 	}
 }
 
