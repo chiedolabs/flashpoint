@@ -10,12 +10,13 @@ A CLI utility for creating temporary Heroku deployments from a starter Heroku ap
 
 # Table of Contents
 1. [Installation and Upgrading](#a)
-2. [Getting Started](#b)
-3. [Using the tool](#c)
-4. [The config file format](#d)
-5. [Development](#e)
-6. [Gotchas](#f)
-7. [Todos](#g)
+1. [Pros and cons] (#aa)
+1. [Getting Started](#b)
+1. [Using the tool](#c)
+1. [The config file format](#d)
+1. [Development](#e)
+1. [Gotchas](#f)
+1. [Todos](#g)
 
 ## <div id="a">Installation and Upgrading</div>
 
@@ -27,6 +28,22 @@ A CLI utility for creating temporary Heroku deployments from a starter Heroku ap
 wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/blob/0.0.2/flashpoint?raw=true \
 && chmod +x /usr/local/bin/flashpoint
 ```
+
+## <div id="aa">Pros and Cons </div>
+
+#### Flashpoint Pros:
+
+- Your apps aren't automatically deleted after 5 days of inactivity, you can run the `clean` command to clean all apps that have been inactive for five days or more but at your own leisure.
+- Trivial to start using. You don't have to change anything on Heroku to do so.
+- You can use Flashpoint for projects that consist of multiple git repos
+- You can automate environment variables based on the newly created app names from other apps in your project.
+
+#### Flashpoint Cons:
+
+- Your apps aren't automatically deleted after 5 days of inactivity. You have to run the `clean` command on occasions or run with a cronjob.
+- All collaborators on the parent project get an invitation to collaborate on each newly created "review app".
+- Apps aren't automatically created with pull requests nor are they automatically deleted.
+- You have to manually push to github and your review app remote when you make changes
 
 ## <div id="b">Getting started</div>
 
@@ -90,7 +107,8 @@ If you don't want to worry about running that command manually, you can schedule
 
 - Install the packages `go get ./...`
 - Make your changes
-- Run `go build`
+- Test with `go run *.go`
+- Run `go build` to build the binary
 
 ## <div id="f">Gotchas</div>
 
@@ -98,14 +116,10 @@ If you don't want to worry about running that command manually, you can schedule
 - The apps created with this tool don't have anything to do with Heroku Pipelines and don't automatically get deleted when you close a pull request.
 - If the parent app has any addons, you'll need to make sure you have a credit card on file on your personal account even if there won't be any charges.
 - We are using Heroku forking to copy the apps so be sure to read [this doc](https://devcenter.heroku.com/articles/fork-app) to be aware of the implications.
-- Changes you make will not automatically be deployed to your app. You will need to manually push any changes you make after the initial deployment. This can be done with `git push -f <HEROKU_APP_NAME> <YOUR_BRANCHNAME>:master`
 - It is still up to you to push your changes to github, etc.
-- Collaborators of the template app aren't automatically added to the new apps because the collaborator would get an annoying email each time...
 
 ## <div id="g">To-dos</div>
 
-- Comment my functions
-- Better docs
 - Create an automation script for creating new projects.
 - Complete beta and move to version 1.0
 
