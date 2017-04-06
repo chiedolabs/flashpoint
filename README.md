@@ -10,7 +10,7 @@ A CLI utility for creating temporary Heroku deployments from a starter Heroku ap
 
 # Table of Contents
 1. [Installation and Upgrading](#a)
-1. [Pros and cons] (#aa)
+1. [Pros and cons](#aa)
 1. [Getting Started](#b)
 1. [Using the tool](#c)
 1. [The config file format](#d)
