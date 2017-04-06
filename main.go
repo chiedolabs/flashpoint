@@ -241,6 +241,7 @@ func main() {
 	boldGreen := color.New(color.FgGreen, color.Bold)
 	boldWhite := color.New(color.FgWhite, color.Bold)
 	boldBlue := color.New(color.FgBlue, color.Bold)
+	boldRed := color.New(color.FgRed, color.Bold)
 
 	/////////////////////////////////////////////////
 	// START THE TIMER
@@ -492,6 +493,9 @@ func main() {
 			boldWhite.Print("\nUpdate command: ")
 			fmt.Printf("git push -f %s %s:master\n\n", reviewAppNames[index], branches[index])
 		}
+		boldGreen.Print("Remember to clean up after yourself every now and then dear by running: ")
+		fmt.Println("flashpoint clean")
+		boldRed.Println("I wont clean up for you! >:( ")
 	} else if len(os.Args) >= 2 && os.Args[1] == "clean" {
 		/////////////////////////////////////////////////////////////
 		// CLEAN - The clean command for the cli util. Deletes all apps
