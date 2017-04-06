@@ -373,6 +373,18 @@ func main() {
 			check(err)
 
 			/////////////////////////////////////////////////
+			// ADD THE SAME COLLABORATORS
+			////////////////////////////////////////////////
+			// Not doing this because this would send an email to each collaborator
+			//out, err = exec.Command("heroku", "access", "--app", app.ParentAppName).CombinedOutput()
+			//check(err)
+			//for _, collaboratorStr := range strings.Split(string(out6), "\n") {
+			//collaborator := strings.Split(collaboratorStr, " ")[0]
+			//out, err = exec.Command("heroku", "access:add", collaborator, "--app", reviewAppNames[index]).CombinedOutput()
+			//check(err)
+			//}
+
+			/////////////////////////////////////////////////
 			// ADD THE GIT REMOTES
 			////////////////////////////////////////////////
 			// Check if the file already contains the include path if it doesn't then add it to the file

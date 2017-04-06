@@ -100,10 +100,10 @@ If you don't want to worry about running that command manually, you can schedule
 - We are using Heroku forking to copy the apps so be sure to read [this doc](https://devcenter.heroku.com/articles/fork-app) to be aware of the implications.
 - Changes you make will not automatically be deployed to your app. You will need to manually push any changes you make after the initial deployment. This can be done with `git push -f <HEROKU_APP_NAME> <YOUR_BRANCHNAME>:master`
 - It is still up to you to push your changes to github, etc.
+- Collaborators of the template app aren't automatically added to the new apps because the collaborator would get an annoying email each time...
 
 ## <div id="g">To-dos</div>
 
-- Automatically add all collaborators from the parent app to the review app using [this](https://devcenter.heroku.com/articles/collaborating#add-collaborators)
 - Comment my functions
 - Better docs
 - Create an automation script for creating new projects.
