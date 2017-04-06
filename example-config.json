@@ -8,6 +8,9 @@
       "scripts": {
         "local": "heroku config:set --app $REVIEW_APP_NAMES[0] DATABASE_URL=$(echo $(heroku config:get --app $REVIEW_APP_NAMES[0] CLEARDB_DATABASE_URL) | sed 's/mysql/mysql2/g')",
         "remote": "bundle exec rake db:migrate && bundle exec rake db:seed"
+      },
+      "env": {
+        "WEB_CLIENT_URL": "$REVIEW_APP_URLS[1]"
       }
     },
     {

@@ -3,8 +3,6 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/fatih/color"
@@ -12,6 +10,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/exec"
@@ -21,6 +20,8 @@ import (
 	"strings"
 	"time"
 )
+
+var r *rand.Rand
 
 func check(e error) {
 	red := color.New(color.FgRed)
@@ -42,12 +43,14 @@ func checkWithMessage(e error, message string) {
 }
 
 func uniqueString() string {
-	n := 6
-	b := make([]byte, n)
-	if _, err := rand.Read(b); err != nil {
-		panic(err)
+	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	strlen := 6
+	result := ""
+	for i := 0; i < strlen; i++ {
+		index := r.Intn(len(chars))
+		result += chars[index : index+1]
 	}
-	return hex.EncodeToString(b)
+	return result
 }
 
 func evaluateVars(value string, reviewAppNames []string) string {
@@ -101,7 +104,10 @@ func destroyOldApps(path string, f os.FileInfo, err error) error {
 		// file and check each of the apps
 		for _, app := range configStruct.Apps {
 			readOnlyFlashpointRepos, err := ioutil.ReadFile(app.Path + "/.git/flashpointrepos")
-			check(err)
+			if err != nil {
+				// This means the file doesn't exist so continue
+				continue
+			}
 
 			// Get a list of apps from the flashpoint git remote file
 			r, _ := regexp.Compile("remote \"(.*)\"")
@@ -191,9 +197,6 @@ func destroyOldApps(path string, f os.FileInfo, err error) error {
 							fileContentArr[index] = ""   // The remote line
 							fileContentArr[index+1] = "" // And so on
 							fileContentArr[index+2] = ""
-							fileContentArr[index+3] = ""
-							fileContentArr[index+4] = ""
-							fileContentArr[index+5] = ""
 						}
 					}
 
@@ -220,6 +223,10 @@ func destroyOldApps(path string, f os.FileInfo, err error) error {
 	}
 
 	return nil
+}
+
+func init() {
+	r = rand.New(rand.NewSource(time.Now().UnixNano()))
 }
 
 func main() {
@@ -332,12 +339,14 @@ func main() {
 		}()
 
 		/////////////////////////////////////////////////
-		// START WORKING ON THE APPS
+		// SET UP REVIEW APP NAMES
 		////////////////////////////////////////////////
+		// We are setting this up first to make sure that every app has access
+		// to all the review app names and URLS they need.
 		reviewAppNames := make([]string, numOfApps)
 		for index, app := range configStruct.Apps {
 			// save the app name. Must start with a letter
-			reviewAppName := "a" + uniqueString() + "-" + app.ParentAppName
+			reviewAppName := "z" + uniqueString() + "-" + app.ParentAppName
 
 			// We'll need to limit the number of chars in the name (Heroku limit)
 			if len(reviewAppName) > 30 {
@@ -346,7 +355,12 @@ func main() {
 
 			// Save the name for later use
 			reviewAppNames[index] = reviewAppName
+		}
 
+		/////////////////////////////////////////////////
+		// START WORKING ON THE APPS
+		////////////////////////////////////////////////
+		for index, app := range configStruct.Apps {
 			/////////////////////////////////////////////////
 			// FORK THE PARENT APPS
 			////////////////////////////////////////////////
@@ -383,7 +397,7 @@ func main() {
 
 			defer flashpointRepos.Close()
 
-			if _, err := flashpointRepos.WriteString(fmt.Sprintf("\n#DO NOT MANUALLY EDIT THESE IN ANY WAY\n[remote \"%s\"]\n  url = https://git.heroku.com/%s.git\n  fetch = +refs/heads/*:refs/remotes/%s/*\n[branch \"%s\"]\n  remote = %s\n  merge = refs/heads/master", reviewAppName, reviewAppName, reviewAppName, branches[index], reviewAppName)); err != nil {
+			if _, err := flashpointRepos.WriteString(fmt.Sprintf("\n#DO NOT MANUALLY EDIT THESE IN ANY WAY\n[remote \"%s\"]\n  url = https://git.heroku.com/%s.git\n  fetch = +refs/heads/*:refs/remotes/%s/*", reviewAppNames[index], reviewAppNames[index], reviewAppNames[index])); err != nil {
 				check(err)
 			}
 
@@ -394,7 +408,7 @@ func main() {
 			boldBlue.Println("SETTING YOUR ENVIRONMENT VARIABLES")
 			fmt.Println("=================================")
 			if app.Env != nil {
-				args := []string{"config:set", "--app", reviewAppName}
+				args := []string{"config:set", "--app", reviewAppNames[index]}
 				for key, value := range app.Env {
 					// evaluate the variables in the string
 					value = evaluateVars(value, reviewAppNames)
@@ -414,7 +428,7 @@ func main() {
 			boldGreen.Print("\n[" + app.Name + "] ")
 			boldBlue.Println("PUSHING YOUR BRANCH TO HEROKU.")
 			fmt.Println("=================================")
-			out2, err2 := exec.Command("git", "push", "-f", "--no-verify", reviewAppName, branches[index]+":master").CombinedOutput()
+			out2, err2 := exec.Command("git", "push", "-f", "--no-verify", reviewAppNames[index], branches[index]+":master").CombinedOutput()
 			fmt.Println(string(out2))
 			check(err2)
 
@@ -430,7 +444,7 @@ func main() {
 					script = evaluateVars(script, reviewAppNames)
 
 					if env == "remote" {
-						out, err := exec.Command("heroku", "run", "--app", reviewAppName, script).CombinedOutput()
+						out, err := exec.Command("heroku", "run", "--app", reviewAppNames[index], script).CombinedOutput()
 						fmt.Println(string(out))
 						check(err)
 					} else {

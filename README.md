@@ -24,7 +24,7 @@ A CLI utility for creating temporary Heroku deployments from a starter Heroku ap
 # via the version number. You can replace the version number below with any version
 # you want to install. When you run this, your current version will be overwritten
 
-wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/blob/0.0.1/flashpoint?raw=true \
+wget -O /usr/local/bin/flashpoint https://github.com/chiedolabs/flashpoint/blob/0.0.2/flashpoint?raw=true \
 && chmod +x /usr/local/bin/flashpoint
 ```
 
@@ -103,6 +103,7 @@ If you don't want to worry about running that command manually, you can schedule
 
 ## <div id="g">To-dos</div>
 
+- Automatically add all collaborators from the parent app to the review app using [this](https://devcenter.heroku.com/articles/collaborating#add-collaborators)
 - Comment my functions
 - Better docs
 - Create an automation script for creating new projects.
