@@ -181,7 +181,7 @@ func main() {
 			boldBlue.Println("FORKING YOUR HEROKU APP")
 			fmt.Println("=================================")
 			os.Chdir(app.Path)
-			out, err := exec.Command("heroku", "fork", "--fast", "--from", app.ParentAppName, "--to", reviewAppNames[index]).CombinedOutput()
+			out, err := exec.Command("heroku", "fork", "--from", app.ParentAppName, "--to", reviewAppNames[index]).CombinedOutput()
 			fmt.Println(string(out))
 			check(err)
 
