@@ -9,6 +9,7 @@
 A CLI utility for creating temporary Heroku deployments from a starter Heroku app and a git branch. The experience is similar to '[Heroku Review Apps](https://devcenter.heroku.com/articles/github-integration-review-apps)' but focuses on API-driven projects that consist of multiple git repositories.
 
 # Table of Contents
+1. [Requirements](#aa)
 1. [Installation and Upgrading](#a)
 1. [Pros and cons](#aa)
 1. [Getting Started](#b)
@@ -17,6 +18,13 @@ A CLI utility for creating temporary Heroku deployments from a starter Heroku ap
 1. [Development](#e)
 1. [Gotchas](#f)
 1. [Todos](#g)
+
+## <div id="aa">Requirements</div>
+
+- [Heroku cli version 5.8.1+](https://devcenter.heroku.com/articles/heroku-cli)
+- [wget](https://www.gnu.org/software/wget/)
+  - OSX: `brew install wget`
+  - Ubuntu: `sudo apt-get install wget`
 
 ## <div id="a">Installation and Upgrading</div>
 
