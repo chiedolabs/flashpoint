@@ -111,6 +111,15 @@ If you don't want to worry about running that command manually, you can schedule
     - **path** - The absolute system path of this app's git repository on your machine.
     - **scripts** - An array of scripts to run on the heroku app after you deploy it. This is useful for doing migrations, seeds, etc.
 
+#### Using alternative heroku mysql databases
+
+If you aren't using the Heroku default postgresql setup and instead are using ClearDB for example, you'll need to make this your first item under `scripts` for the backend so that the `DATABASE_URL` is set to the correct value after the new app is created. It's hackish but it works. It's sets the `DATABASE_URL` on the newly created heroku app to the `CLEARDB_DATABASE_URL` which contains the newly created database's URL. Without this, `CLEARDB_DATABASE_URL` will be correct on the new app but `DATABASE_URL` will not be.
+
+```
+"local": "heroku config:set --app $REVIEW_APP_NAMES[0] DATABASE_URL=$(echo $(heroku config:get --app $REVIEW_APP_NAMES[0] CLEARDB_DATABASE_URL) | sed 's/mysql/mysql2/g')",
+
+```
+
 ## <div id="e">Development</div>
 
 - Install the packages `go get ./...`
