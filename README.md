@@ -74,12 +74,20 @@ Create a project
 ```
 flashpoint <PROJECT_FILE_NAME> create
 ```
+**Note*** Each branch creates a new flashpoint project, so that, the same app with two branches will create two different projects. See [Updating](#updating), to update an existing branch's project.
 
 See a fleshed out example (Notice that we're using the file name but not the absolute path).
 
 ```
 flashpoint example.json create
 ```
+#### <a name="updating"></a>Updating Exsisting Projects
+To Update an existing project run:
+
+```
+git push -f <APP_NAME> <LOCALBRANCH>:master
+```
+The update command will also be given to you after creating your project.
 
 #### Cleaning up old apps
 
