@@ -74,7 +74,7 @@ Create a project
 ```
 flashpoint <PROJECT_FILE_NAME> create
 ```
-> **Note** Each time you run this, a new group of Heroku apps are deployed (or just one Heroku app if that's all your project contains). See [Updating](#updating), to update an existing deployment.
+> **Note** Each time you run this (whether you've created a flashpoint deployment from the same branches already or not), a new group of Heroku apps are deployed (or just one Heroku app if that's all your project contains). See [Updating](#updating), to update an existing deployment.
 
 See a fleshed out example (Notice that we're using the file name but not the absolute path).
 
