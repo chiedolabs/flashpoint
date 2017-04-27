@@ -74,7 +74,7 @@ Create a project
 ```
 flashpoint <PROJECT_FILE_NAME> create
 ```
-**Note*** Each branch creates a new flashpoint project, so that, the same app with two branches will create two different projects. See [Updating](#updating), to update an existing branch's project.
+> **Note** Each time you run this, a new group of Heroku apps are deployed (or just one Heroku app if that's all your project contains). See [Updating](#updating), to update an existing deployment.
 
 See a fleshed out example (Notice that we're using the file name but not the absolute path).
 
@@ -85,7 +85,7 @@ flashpoint example.json create
 To Update an existing project run:
 
 ```
-git push -f <APP_NAME> <LOCALBRANCH>:master
+git push -f <HEROKU_APP_NAME> <LOCALBRANCH>:master
 ```
 The update command will also be given to you after creating your project.
 
