@@ -38,7 +38,7 @@ func init() {
 
 func main() {
 	if len(os.Args) >= 2 && os.Args[1] == "--version" {
-		fmt.Println("0.0.4")
+		fmt.Println("0.0.5")
 		os.Exit(0)
 	}
 
@@ -97,6 +97,8 @@ func main() {
 
 		// Create a place to store the branches
 		branches := make([]string, numOfApps)
+		// Create a place to store whether or not collaborators should be added
+		addCollaborators := false
 
 		boldBlue.Println("\nCHOOSE YOUR BRANCHES")
 		fmt.Println("=================================")
@@ -139,6 +141,21 @@ func main() {
 
 				//TODO: Check branch for validity
 			}
+		}
+
+		////////////////////////////////////////
+		// DETERMINE IF WE'LL ADD COLLABORATORS OR NOT
+		////////////////////////////////////////
+		boldBlue.Println("\nCOLLABORATORS")
+		fmt.Println("=================================")
+		reader := bufio.NewReader(os.Stdin)
+
+		boldWhite.Print("\nWould you like to add existing collaborators to this deployment?")
+		fmt.Print("(Y or N - defauts to N):")
+		text, _ := reader.ReadString('\n')
+
+		if text == "Y" || text == "y" || text == "YES" || text == "yes" {
+			addCollaborators = true
 		}
 
 		/////////////////////////////////////////////////
@@ -188,14 +205,16 @@ func main() {
 			/////////////////////////////////////////////////
 			// ADD THE SAME COLLABORATORS
 			////////////////////////////////////////////////
-			out8, err8 := exec.Command("heroku", "access", "--app", app.ParentAppName).CombinedOutput()
-			check(err8)
-			for _, collaboratorStr := range strings.Split(string(out8), "\n") {
-				collaborator := strings.Split(collaboratorStr, " ")[0]
-				if strings.Contains(collaborator, "@") {
-					_, err := exec.Command("heroku", "access:add", collaborator, "--app", reviewAppNames[index]).CombinedOutput()
+			if addCollaborators {
+				out8, err8 := exec.Command("heroku", "access", "--app", app.ParentAppName).CombinedOutput()
+				check(err8)
+				for _, collaboratorStr := range strings.Split(string(out8), "\n") {
+					collaborator := strings.Split(collaboratorStr, " ")[0]
+					if strings.Contains(collaborator, "@") {
+						_, err := exec.Command("heroku", "access:add", collaborator, "--app", reviewAppNames[index]).CombinedOutput()
 
-					checkWithMessage(err, "There was an issue adding the collaborator "+collaborator)
+						checkWithMessage(err, "There was an issue adding the collaborator "+collaborator)
+					}
 				}
 			}
 
