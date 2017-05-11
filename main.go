@@ -38,7 +38,7 @@ func init() {
 
 func main() {
 	if len(os.Args) >= 2 && os.Args[1] == "--version" {
-		fmt.Println("0.0.5")
+		fmt.Println("0.0.6")
 		os.Exit(0)
 	}
 
@@ -151,10 +151,10 @@ func main() {
 		reader := bufio.NewReader(os.Stdin)
 
 		boldWhite.Print("\nWould you like to add existing collaborators to this deployment?")
-		fmt.Print("(Y or N - defauts to N):")
+		fmt.Print(" (Y or N):")
 		text, _ := reader.ReadString('\n')
 
-		if text == "Y" || text == "y" || text == "YES" || text == "yes" {
+		if strings.HasPrefix(strings.ToLower(text), "y") {
 			addCollaborators = true
 		}
 
