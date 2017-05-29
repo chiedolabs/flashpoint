@@ -1,4 +1,4 @@
-⚡ Flashpoint
+# ⚡ Flashpoint
 
 
 **Beta notice:** This CLI utility is still in beta and is rapidly changing. Many changes are breaking changes and require manual intervention.
