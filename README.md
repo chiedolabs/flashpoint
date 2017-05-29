@@ -148,4 +148,3 @@ If you aren't using the Heroku default postgresql setup and instead are using Cl
 ## Legal Stuff
 
 - [LICENSE](./LICENSE)
-- Logo <a href='http://www.freepik.com/free-vector/lightning-logo_719539.htm'>Designed by Freepik</a>
