@@ -78,6 +78,8 @@ See a fleshed out example (Notice that we're using the file name but not the abs
 ```
 flashpoint example.json create
 ```
+
+
 #### <a name="updating"></a>Updating Exsisting Projects
 To Update an existing project run:
 
@@ -115,6 +117,9 @@ If you don't want to worry about running that command manually, you can schedule
     - **parent_app_name** - The name of the app on Heroku that will be used as the template (leave out the herokuapp.com portion)
     - **path** - The absolute system path of this app's git repository on your machine.
     - **scripts** - An array of scripts to run on the heroku app after you deploy it. This is useful for doing migrations, seeds, etc.
+- **Special variables** - Add these in your json config and replace index with the index of the app whose data you want.
+	- `$REVIEW_APP_NAMES[index]` - Will give you the heroku app name for the app. eg. `$REVIEW_APP_NAMES[0]`
+	- `$REVIEW_APP_URLS[index]` - Will give you the URL for the app. eg. `$REVIEW_APP_URLS[1]`
 
 #### Using alternative heroku mysql databases
 
